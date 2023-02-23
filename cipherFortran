@@ -1,0 +1,137 @@
+program main
+    implicit none
+    
+    character(len=3) :: mainString = "HAL"
+    integer :: shiftAmount = 25
+    
+    
+
+    call encrypt(mainString, shiftAmount) 
+    
+    
+    contains
+
+        subroutine encrypt(mainString, shiftAmount)
+        
+            character(len=3) :: mainString
+            character(len=3) :: encrypted
+            character(len=1) :: y
+            integer :: shiftAmount
+            integer :: characters
+            integer :: x
+            
+            characters = 1
+            
+            do x = len(mainString), characters, -1
+                if (ichar(mainString(x:x)) >= 65 .and. ichar(mainString(x:x)) <= 90) then
+                    y = achar(mod((mod((ichar(mainString(x:x)) - 65 + shiftAmount),26) + 26), 26) + 65)
+                    encrypted = y // encrypted !encrypted //y was not printing anything out, so I have to decremenet the loop to go backwards in the string
+                else
+                    y = achar(ichar(mainString(x:x)))
+                    encrypted = y // encrypted
+                end if
+            end do
+            print*, "Encrypted: ", encrypted
+            
+            call decrypt(encrypted)
+            call solve(mainString, encrypted)
+        
+
+        end subroutine encrypt
+        
+!-----------------------------------------------------------------------------------------!
+        
+        subroutine decrypt(encryptedString)
+        
+            character (len=3) :: encryptedString
+            character (len=3) :: decrypted
+            character (len=1) :: y
+            integer :: shiftAmount
+            integer :: characters
+            integer :: x
+            
+            characters = 1
+            
+            do x = len(encryptedString), characters, -1
+                if (ichar(encryptedString(x:x)) >= 65 .and. ichar(encryptedString(x:x)) <= 90) then
+                    y = achar(mod((mod((ichar(mainString(x:x)) - 65 - shiftAmount),26) + 26), 26) + 65)
+                    decrypted = y // decrypted !decrypted //y was not printing anything out, so I have to decremenet the loop to go backwards in the string
+            
+                else
+                    y = achar(ichar(encryptedString(x:x)))
+                    decrypted = y // decrypted
+                end if
+            end do
+            print*, "Decrypted: ", decrypted
+        
+        
+        end subroutine
+        
+!-----------------------------------------------------------------------------------------!
+
+        subroutine solve(mainString, encrypted)
+        
+            character (len=3) :: mainString
+            character (len=3) :: encrypted
+            character (len=3) :: solvedEncrypted
+            character (len=3) :: solvedDecrypted
+            character (len=1) :: c
+            character (len=1) :: d
+            integer :: maxShiftValue
+            integer :: characters
+            integer :: shift
+            integer :: shifttwo
+            integer :: j
+            integer :: i
+            
+            
+            maxShiftValue = 26
+            characters = 1
+            
+            
+            if (maxShiftValue >= 0) then
+                do shift = maxShiftValue, 0, -1
+                    do j = len(mainString), characters, -1
+                        if (ichar(mainString(j:j)) >= 65 .and. ichar(mainString(j:j)) <= 90) then
+                            c = achar(mod((mod((ichar(mainString(j:j)) - 65 + shift),26) + 26), 26) + 65)
+                            solvedEncrypted = c // solvedEncrypted !encrypted //y was not printing anything out, so I have to decremenet the loop to go backwards in the string
+                        else
+                            c = achar(ichar(mainString(j:j)))
+                            solvedEncrypted = c // solvedEncrypted
+                        end if
+                    end do
+                    print*, "Ceaser: ", shift, " : ", solvedEncrypted
+                    
+                end do
+                
+            else
+                do shift = maxShiftValue, 0, +1
+                    do j = len(encrypted), characters, -1
+                        if (ichar(mainString(j:j)) >= 65 .and. ichar(mainString(j:j)) <= 90) then
+                            c = achar(mod((mod((ichar(mainString(j:j)) - 65 + shift), 26) + 26), 26) + 65)
+                            solvedEncrypted = c // solvedDecrypted !encrypted //y was not printing anything out, so I have to decremenet the loop to go backwards in the string
+                            do shifttwo = maxShiftValue, 0, +1
+                                do i = len(solvedEncrypted), characters, -1
+                                    if (ichar(solvedEncrypted(i:i)) >= 65 .and. ichar(solvedEncrypted(i:i)) <= 90) then
+                                        d = achar(mod((mod((ichar(solvedEncrypted(i:i)) - 65 - shifttwo), 26) + 26), 26) + 65)
+                                        solvedDecrypted = d // solvedDecrypted !encrypted //y was not printing anything out, so I have to decremenet the loop to go backwards in the string
+                                    end if
+                                end do
+                            end do    
+                        else
+                            c = achar(ichar(encrypted(j:j)))
+                            solvedDecrypted = c // solvedDecrypted
+                        end if
+                    end do
+                    print*, "Ceaser: ", shift, " : ", solvedDecrypted
+                    
+                end do
+            
+            end if
+            
+            
+        end subroutine
+        
+        
+        
+end program main

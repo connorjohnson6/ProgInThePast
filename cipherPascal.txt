@@ -1,0 +1,79 @@
+program ceaserCipher;
+
+var
+   str: string;
+   shiftAmount, maxShiftValue: integer;
+  
+function encrypt(str: string; shiftAmount: integer): string;
+var
+    character: integer;
+begin
+    (*Was having trouble figuring out why I could not assign a variable to 'ord(str[character]', decided to leave it as is*)
+    for character := 1 to length(str) do 
+        if (ord(str[character]) >= 65) and (ord(str[character]) <= 90) then
+            begin   (*Did not know why I couldn't assign negatives values to shift, wiht the mod 26 + 26, it allows negative of all numbers even after 26 *)      
+                str[character] := chr(((ord(str[character]) - 65 + shiftAmount) mod 26 + 26)mod 26 + 65)
+            end
+        else
+            begin
+                str := str[character]
+            end;
+    encrypt := str
+    
+end;
+
+
+function decrypt(str: string; shiftAmount: integer): string;
+var
+    character: integer;
+    decryptedString: String;
+begin
+(*Trouble renaming variable so that I can be more descriptive*)
+    decryptedString := encrypt(str, shiftAmount);
+    
+    for character := 1 to length(decryptedString) do
+        if (ord(decryptedString[character]) >= 65) and (ord(decryptedString[character]) <= 90) then
+            begin
+                decryptedString[character] := chr(((ord(decryptedString[character]) - 65 - shiftAmount) mod 26 + 26)mod 26 + 65)
+            end
+        else
+            begin
+                decryptedString := decryptedString[character]
+            end;
+    decrypt := decryptedString 
+    
+end;
+
+
+function solve(str: string; maxShiftValue: integer): String ;
+var
+   solved: string;
+begin
+    if maxShiftValue >=0 then
+        while maxShiftValue >= 0 do
+            begin
+                solved := encrypt(str, maxShiftValue);
+                writeln('Ceaser ',maxShiftValue ,': ', solved);
+                maxShiftValue := maxShiftValue - 1;
+            end
+    else
+        while maxShiftValue <= 0 do
+            begin
+                solved := decrypt(encrypt(str, maxShiftValue), maxShiftValue);
+                writeln('Ceaser ',maxShiftValue ,': ', solved); (*Same as Scala: Correct formate, but does not cipher*)
+                maxShiftValue := maxShiftValue + 1;
+            end
+end;
+
+begin
+    str := 'HAL';
+    shiftAmount := 2;
+    maxShiftValue := 26;
+   
+  
+   
+    writeln('Encrypted: ', encrypt(str, shiftAmount));
+    writeln('Decrypted: ', decrypt(str, shiftAmount));
+    writeln('Solved:');
+    writeln(solve(str, maxShiftValue));
+end.

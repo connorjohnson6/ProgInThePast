@@ -1,0 +1,98 @@
+IDENTIFICATION DIVISION.
+PROGRAM-ID. HELLO-WORLD.
+DATA DIVISION.
+    WORKING-STORAGE SECTION.
+
+        77 mainString PIC A(3) value "HAL". 
+        77 shiftAmount PIC 999 value 3.
+        77 maxShiftValue PIC 999 value 26.
+     
+        77 characterized PIC 999 value 1.
+        77 mainStringLength PIC 999.
+        
+        77 encrypted PIC A(3).
+        77 y PIC A(1).
+        
+        
+        77 decrypted PIC A(3).
+        77 x PIC A(1).
+        
+        77 encryptedSolved PIC A(3).
+        77 i PIC A(1).
+        
+        77 shift PIC 999 value 1.
+        
+        
+        
+        
+        
+PROCEDURE DIVISION.
+    INSPECT mainString TALLYING mainStringLength FOR CHARACTERS
+
+    perform VARYING characterized FROM 1 by 1 until characterized = mainStringLength + 1
+        
+        if (function ord(mainString(characterized:characterized)) >= 65 and function ord(mainString(characterized:characterized)) <= 90) 
+            move function char(function mod((function mod((function ord(mainString(characterized:characterized)) - 66 + shiftAmount),26) + 26), 26) + 66) to y
+            move y to encrypted(characterized:characterized)
+            
+        else 
+            move function char(function ord(mainString(characterized:characterized))) to encrypted 
+            
+        end-if
+
+        
+    end-perform.
+    display "Encrypted: "encrypted
+    
+    
+    
+    
+    
+    
+    perform VARYING characterized FROM 1 by 1 until characterized = mainStringLength + 1
+        if (function ord(encrypted(characterized:characterized)) >= 65 and function ord(encrypted(characterized:characterized)) <= 90) 
+            move function char(function mod((function mod((function ord(encrypted(characterized:characterized)) - 66 - shiftAmount),26) + 26), 26) + 66) to x
+            move x to decrypted(characterized:characterized)
+            
+        else 
+            move function char(function ord(encrypted(characterized:characterized))) to decrypted
+            
+        end-if
+    
+    end-perform.
+    display "Decrypted: "decrypted
+    
+    
+    
+    
+    
+    
+    
+    IF maxShiftValue >= 0
+        PERFORM VARYING shift FROM 0 BY 1 UNTIL shift > maxShiftValue
+            perform VARYING characterized FROM 1 by 1 until characterized = mainStringLength + 1
+                
+                if (function ord(mainString(characterized:characterized)) >= 65 and function ord(mainString(characterized:characterized)) <= 90) 
+                    move function char(function mod((function mod((function ord(mainString(characterized:characterized)) - 66 + shift),26) + 26), 26) + 66) to y
+                    move y to encryptedSolved(characterized:characterized)
+                    
+                else 
+                    move function char(function ord(mainString(characterized:characterized))) to encryptedSolved 
+                    
+                end-if
+            
+
+            END-PERFORM
+            
+            DISPLAY "Caesar " shift " : " encryptedSolved
+            
+        END-PERFORM
+    ELSE
+        DISPLAY "bad"
+    END-IF
+    
+    
+    
+    
+    
+STOP RUN.

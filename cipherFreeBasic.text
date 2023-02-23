@@ -1,0 +1,82 @@
+function encrypt(mainString AS STRING, shiftAmount AS INTEGER) AS STRING
+    dim character as integer
+    dim encrypted as string
+    
+    
+    for character = 0 to len(mainString)-1 '-1 because for some reason, when character was printed I would receive a 0 at the end even though the length was 3 for len(mainString)
+        if mainString[character] >= 65 and mainString[character] <= 90 then
+            encrypted += chr(((mainString[character] - 65 + shiftAmount) mod 26 + 26) mod 26 + 65)
+        else
+            encrypted += chr(mainString[character])
+        end if
+    next
+    return encrypted
+end function
+
+
+function decrypt(mainString AS STRING, shiftAmount AS INTEGER) AS STRING
+    dim character as integer
+    dim decrypted as string
+    dim encryptedString as string
+     
+    encryptedString = encrypt(mainString, shiftAmount)
+    
+    for character = 0 to len(encryptedString)-1
+        if encryptedString[character] >= 65 and encryptedString[character] <= 90 then
+            decrypted += chr(((encryptedString[character] - 65 - shiftAmount) mod 26 + 26) mod 26 + 65)
+        else
+            decrypted += chr(encryptedString[character])
+        end if
+    next
+    return decrypted
+end function
+
+
+function solve(mainString AS STRING, maxShiftValue AS INTEGER) AS STRING
+   dim solveEncypt as string   
+   dim solveDecrypt as string
+        
+    if maxShiftValue >= 0 then
+        while maxShiftValue >= 0 
+            solveEncypt = encrypt(mainString, maxShiftValue)
+            print "Ceaser",maxShiftValue,":",solveEncypt
+            maxShiftValue -= 1
+        wend
+        
+    else
+        while maxShiftValue <= 0 
+            solveDecrypt = decrypt(str(encrypt(mainString, maxShiftValue)), maxShiftValue)
+            print "Ceaser",maxShiftValue,":",solveDecrypt
+            maxShiftValue += 1
+        wend
+        
+    end if
+        
+end function
+
+
+
+'------------Main function------------'
+dim mainString as string
+dim shiftAmount as integer
+dim maxShiftValue as integer
+
+dim encrypted as string
+dim decrypted as string
+
+mainString = "HAL"
+shiftAmount = 3
+maxShiftValue = -26
+
+
+
+encrypted = encrypt(mainString, shiftAmount)
+decrypted = decrypt(mainString, shiftAmount)
+
+
+print "Encrypted:", encrypted
+print "Decrypted: ", decrypted
+print "Solve:" 
+solve(mainString, maxShiftValue)
+
+
