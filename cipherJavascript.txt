@@ -1,0 +1,68 @@
+var str = "HAL";
+var shiftAmount = 3;
+var maxShiftAmount = 26;
+
+let encrypted = encrypt(str, shiftAmount);
+console.log("Encrypted:", encrypted)
+
+let decrypted = decrypt(encrypted, shiftAmount);
+console.log("Decrypted:", decrypted)
+
+console.log("Solved:" )
+let solved = solve(str, maxShiftAmount);
+
+function encrypt(str, shiftAmount) {
+    //use map to iterate through the string without loop
+  const encryptedString = str.split("").map(char => {
+    //get the beginning index of char to go through the map 
+    const charAscii = char.charCodeAt(0);
+    //equation used in in all ciphers
+    const encryptedChar = ((charAscii - 65 + shiftAmount) % 26 + 26) % 26 + 65;
+    //needed to change the ascii back to char value
+    return String.fromCharCode(encryptedChar);
+  });
+  //returns the joined characters(Now string)
+  return encryptedString.join("");
+}
+
+
+function decrypt(str, shiftAmount) {
+    //use map to iterate through the string without loop
+  const decryptedString = str.split("").map(char => {
+    //get the beginning index of char to go through the map 
+    const charAscii = char.charCodeAt(0);
+    //equation used in in all ciphers
+    const decryptedChar = ((charAscii - 65 - shiftAmount) % 26 + 26) % 26 + 65;
+    //needed to change the ascii back to char value
+    return String.fromCharCode(decryptedChar);
+  });
+  //returns the joined characters(Now string)
+  return decryptedString.join("");
+}
+
+function solve(str, maxShiftAmount) {
+    if(maxShiftAmount >= 0){
+        positiveShiftValueRecursion(str, maxShiftAmount);
+    }
+    
+    if(maxShiftAmount < 0){
+        negativeShiftValueRecursion(str, maxShiftAmount);
+    }
+    
+    function positiveShiftValueRecursion(str, maxShiftAmount){
+        if( maxShiftAmount >= 0){
+            let solveEncrypt = encrypt(str, maxShiftAmount); 
+            console.log("Ceaser", maxShiftAmount,  ":",  solveEncrypt);
+            positiveShiftValueRecursion(str, maxShiftAmount - 1);
+      }
+    }
+    
+    function negativeShiftValueRecursion(str, maxShiftAmount){
+        if(maxShiftAmount <= 0){
+            let solveDecrypt = decrypt(str, -maxShiftAmount);
+            console.log("Caesar", maxShiftAmount, ":", solveDecrypt);
+            negativeShiftValueRecursion(str, maxShiftAmount + 1);
+      }
+    }
+  
+}

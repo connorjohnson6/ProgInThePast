@@ -1,0 +1,68 @@
+-module(helloworld).
+-export([encrypt/2, decrypt/2, solve/2, start/0]).
+
+encrypt(Str, ShiftAmount) ->
+    %Create a new list for the encryptChar values     %get each character in the str
+    EncryptedStr = [encryptChar(Character, ShiftAmount) || Character <- Str],
+    %return EncryptedStr
+    EncryptedStr.
+
+    %Takes each charcter found in the new list  
+encryptChar(Character, ShiftAmount) ->
+    %Equation used from old ciphers
+    ((Character - 65 + ShiftAmount) rem 26 + 26) rem 26 + 65.
+
+decrypt(Str, ShiftAmount) ->
+    %Create a new list for the encryptChar values     %get each character in the str
+    DecryptedStr = [decryptedChar(Character, ShiftAmount) || Character <- Str],
+    %return DecryptedStr
+    DecryptedStr.
+
+    %Takes each charcter found in the new list  
+decryptedChar(Character, ShiftAmount) ->
+    %Equation used from old ciphers
+    ((Character - 65 - ShiftAmount) rem 26 + 26) rem 26 + 65.
+
+solve(Str, MaxShiftAmount ) -> 
+    %check to see where maxshiftvalue lies, debends on what function to use
+    case MaxShiftAmount > 0 of
+        true ->
+            positiveShiftValueRecursion(Str, MaxShiftAmount);
+        false ->
+            negativeShiftValueRecursion(Str, MaxShiftAmount)
+    end.
+
+positiveShiftValueRecursion(Str, MaxShiftAmount) ->
+    case MaxShiftAmount > 0 of
+        true ->
+            SolveEncrypt = encrypt(Str, MaxShiftAmount),
+            io:fwrite("Ceaser ~w : ~s~n", [MaxShiftAmount, SolveEncrypt]),
+            positiveShiftValueRecursion(Str, MaxShiftAmount - 1);
+        false ->
+            ok % similar to a none value, just notifiys when done with the recursion
+    end.
+
+negativeShiftValueRecursion(Str, MaxShiftAmount) ->
+    case MaxShiftAmount < 0 of
+        true ->
+            SolveDecrypt = decrypt(Str, -MaxShiftAmount), % must have -MaxshiftValue to replecate encryption
+            io:fwrite("Ceaser ~w : ~s~n", [MaxShiftAmount, SolveDecrypt]),
+            negativeShiftValueRecursion(Str, MaxShiftAmount + 1);
+        false ->
+            ok % similar to a none value, just notifiys when done with the recursion
+    end.
+
+start() ->
+    Str = "HAL",
+    ShiftAmount = 3,
+    MaxShiftAmount = 26,
+    
+    %print statements make it so that the encruptedStr and decryptedStr are in String values '~s~n'
+    EncryptedStr = encrypt(Str, ShiftAmount),
+    io:fwrite("Encrypted : ~s~n", [EncryptedStr]),
+    
+    DecryptedStr = decrypt(EncryptedStr, ShiftAmount),
+    io:fwrite("Decrypted : ~s~n", [DecryptedStr]),
+    
+    io:fwrite("Solve: \n"),
+    solve(Str, MaxShiftAmount).

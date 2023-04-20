@@ -1,0 +1,49 @@
+let encrypt (str: string) (shiftAmount: int) : string =
+    let asciiValues = str |> Seq.map int
+    
+    let encrypted = asciiValues |> Seq.map (fun character ->
+        let shifted = (((character - 65 + shiftAmount) % 26 + 26) % 26 + 65) 
+        char shifted 
+    )
+
+    let encryptedString = System.String(encrypted |> Seq.toArray)
+    encryptedString
+    
+let decrypt (str: string) (shiftAmount: int) : string =
+    let asciiValues = str |> Seq.map int
+    
+    let decrypted = asciiValues |> Seq.map (fun character ->
+        let shifted = (((character - 65 - shiftAmount) % 26 + 26) % 26 + 65) 
+        char shifted 
+    )
+    
+    let decryptedString = System.String(decrypted |> Seq.toArray)
+    decryptedString
+    
+    
+let rec solve (str: string) (maxShiftAmount: int) : unit =
+    if maxShiftAmount > 0 then
+        let solveEncrypt = encrypt str maxShiftAmount
+        printfn "Caesar %d: %s" maxShiftAmount solveEncrypt
+        solve str (maxShiftAmount-1)
+    else if maxShiftAmount < 0 then
+        let solveDecrypt = decrypt str -maxShiftAmount
+        printfn "Caesar %d: %s" maxShiftAmount solveDecrypt
+        solve str (maxShiftAmount+1)
+
+
+let lowerstr = "hal"
+let shiftAmount = 3
+let maxShiftAmount = -26
+
+let str = lowerstr.ToUpper()
+
+let encrypted = encrypt str shiftAmount
+printfn "Encrypted: %s" encrypted
+
+let decrypted = decrypt encrypted shiftAmount
+printfn "Decrypted: %s" decrypted
+
+printfn "Solved:" 
+solve str maxShiftAmount
+

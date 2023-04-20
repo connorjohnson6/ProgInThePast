@@ -1,0 +1,75 @@
+(defun encrypt (str shiftAmount)
+
+  (coerce
+   (map 'list ; Applies the function to each element of the list
+        (lambda (char) ; takes a single argument char
+          (let ((code (char-code char))) ; Assigns the ASCII code of char to the variable code
+            (if (and (>= code 65) (<= code 90)) ; Checks if char is an uppercase letter
+                (code-char (+ 65 (mod (+ (- code 65) shiftAmount) 26))) ; Shifts the letter by the given amount and returns the resulting character
+                char))) ; Returns the original character if it is not an uppercase letter
+        str) ; Applies the function to the input string
+   'string); Converts characters to a string
+   
+) 
+
+(defun decrypt (str shiftAmount)
+
+  (coerce
+   (map 'list ; Applies the function to each element of the list
+        (lambda (char) ; takes a single argument char
+          (let ((code (char-code char))) ; Assigns the ASCII code of char to the variable code
+            (if (and (>= code 65) (<= code 90)) ; Checks if char is an uppercase letter
+                (code-char (+ 65 (mod (- (- code 65) shiftAmount) 26))) ; Shifts the letter by the given amount and returns the resulting character
+                char))) ; Returns the original character if it is not an uppercase letter
+        str) ; Applies the function to the input string
+   'string); Converts characters to a string
+   
+)
+
+(defun solve (str maxShiftAmount)
+  (if (>= maxShiftAmount 0) 
+      (positiveShiftValueRecursion str maxShiftAmount) ; if maxShiftAmount is greater than 0
+      (negativeShiftValueRecursion str maxShiftAmount))) ; if maxShiftAmount is less than 0
+
+    
+    
+
+(defun positiveShiftValueRecursion (str maxShiftAmount)
+  (if (>= maxShiftAmount 0)
+        (progn ;used for grouping together characters
+            (setf solveEncrypt (encrypt str maxShiftAmount))
+            (write-line (format nil "Ceaser ~a: ~a" maxShiftAmount solveEncrypt))
+            (positiveShiftValueRecursion str (- maxShiftAmount 1))
+        )
+      
+    )
+    
+)
+
+(defun negativeShiftValueRecursion (str maxShiftValue)
+  (if (<= maxShiftValue 0)
+        (progn
+            (setf solveDecrypt (decrypt str (- maxShiftValue))) ; you must have the - maxShiftValue for it to properly decrypt (me and chatgpt solution)
+            (write-line (format nil "Ceaser ~a: ~a" maxShiftValue solveDecrypt))
+            (negativeShiftValueRecursion str (+ maxShiftValue 1))
+        )
+    )
+)
+
+
+
+
+(defvar str "hal") ; Assigns the input string
+(defvar shiftAmount 3) ; Assigns the shift amount
+(defvar maxShiftAmount -26) ; Assigns the maxShiftAmount for solve
+
+(setf str (string-upcase str)) ; Converts the input string to uppercase
+
+(setf encrypted (encrypt str shiftAmount)) ; Encrypts the string using the given shift amount
+(write-line (format nil "Encrypted string: ~a" encrypted))
+
+(setf decrypted (decrypt encrypted shiftAmount)); Decrypts the string using the given shift amount
+(write-line (format nil "Decrypted string: ~a" decrypted)) 
+
+(write-line (format nil "Solve: ")) 
+(solve str maxShiftAmount)
