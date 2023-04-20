@@ -1,63 +1,62 @@
 object CeaserCipher {
-  def main(args: Array[String]) {
-    var str = "HAL"
-    var shiftAmount = 3
+    def main(args: Array[String]) {
+        var str = "HAL"
+        var shiftAmount = 3
+        var maxShiftValue = 26
+        
+        println("Encrypted: " +  encrypt(str, shiftAmount))
+        println("Decrypted: " + decrypt(str, shiftAmount))
+        println("Solve:")
+        solve(str)
 
-    val encryptedStr = encrypt(str, shiftAmount)
-    println("Encrypted: " + encryptedStr)
+        
+    }//ends main
+    
+            //define variabels for function     
+    def encrypt( str:String, shiftAmount:Int ) : String = {
+        var encrypted = ""
 
-    val decryptedStr = decrypt(encryptedStr, shiftAmount)
-    println("Decrypted: " + decryptedStr)
-
-    println("Solve:")
-    solve(str) // Pass the encrypted string to the solve function
-  }
-
-  def encrypt(str: String, shiftAmount: Int): String = {
-    // Using toCharArray method to convert the string to an array of characters
-    str.toCharArray.collect {
-      // Using a case statement to match on each character in the array
-      case character if character.isUpper => (((character - 65 + shiftAmount) % 26 + 26) % 26 + 65).toChar // Encrypt uppercase character
-      case character => character // Return unchanged for any other character
-    }.mkString // Convert the array of characters back to a string
-  }
-
-  def decrypt(str: String, shiftAmount: Int): String = {
-    // Using toCharArray method to convert the string to an array of characters
-    str.toCharArray.collect {
-      // Using a case statement to match on each character in the array
-      case character if character.isUpper => (((character - 65 - shiftAmount) % 26 + 26) % 26 + 65).toChar // subtract the shiftamout for decrypt
-      case character => character// Return unchanged for any other character
-    }.mkString // Convert the array of characters back to a string
-  }
-
-  def solve(str:String) : Unit = {
-    var maxShiftAmount = 26 // could not set maxShiftAmount in main if I wanted to increment
-
-    //if maxShiftAmount is postive
-    if (maxShiftAmount >=0){
-      positiveShiftValueRecursion(maxShiftAmount)
+        for (position <- str){        //no ord() function = use .toInt      //iterate through the innitial message
+            if (position.toInt >= 65 && position.toInt <= 90) { // ASCII *Uppercase* letter in alphabet
+                encrypted += (((position.toInt - 65 + shiftAmount) % 26 + 26) % 26 + 65).toChar  //test for positive and negative numbers
+            } else {                                                                   //.toChar takes the ASCII number and converts to number 
+                                                                      //^+26 allows for loop in alphabet
+                encrypted += position  //adds if not a character in alphabet 
+            }
+        }
+        encrypted
     }
+    
+    def decrypt(str:String, shiftAmount:Int) : String = {
+        var encryptedstring = encrypt(str, shiftAmount)
+        var decrypted = "" 
 
-    //if maxShiftAmount is negative
-    if (maxShiftAmount <0){
-      negativeShiftValueRecursion(maxShiftAmount)
+        for (position <- encryptedstring){
+            if (position.toInt >= 65 && position.toInt <= 90) { 
+                decrypted += (((position.toInt - 65 - shiftAmount) % 26 + 26) % 26 + 65).toChar
+            } else {                        //minus reverses the shift and creates decrypt
+                decrypted += position 
+            }
+        }
+        decrypted
     }
-
-    def positiveShiftValueRecursion(maxShiftAmount: Int): Unit = {
-      if( maxShiftAmount >= 0){
-        var solveEncrypt = encrypt(str, maxShiftAmount) //calls from the encrypt function to continuously get results
-        println("Ceaser " + maxShiftAmount +  ": " +  solveEncrypt)
-        positiveShiftValueRecursion(maxShiftAmount - 1) //keep maxShiftAmount at positive number and decrease to 0 to print properly
-      }
+    
+    def solve(str:String) : Unit = {
+        var maxShiftValue = -26 // could not set maxShiftValue in main if I wanted to increment
+        
+        //if maxShiftValue is postive
+        if (maxShiftValue >=0){
+            while (maxShiftValue >= 0){
+                var solveEncrypt = encrypt(str, maxShiftValue)
+                println("Ceaser " + maxShiftValue +  ": " +  solveEncrypt)
+                maxShiftValue -= 1 //keep maxShiftValue at positive number and incremenet to 0 to print properly 
+            }
+        }else{//if maxShiftValue is negative
+            while (maxShiftValue <= 0){
+                var solveDecrypt = decrypt(encrypt(str, maxShiftValue).toString, maxShiftValue)//figure out why only decrypting it doesnt work //because i was passing a regular str rather than the function encrypt (str, maxshiftvalue)
+                println("Ceaser " + maxShiftValue +  ": " +  solveDecrypt) 
+                maxShiftValue += 1 //keep maxShiftValue at negative number and incremenet to 0 to print properly
+            }
+        }
     }
-
-    def negativeShiftValueRecursion(maxShiftAmount: Int): Unit = {
-      if(maxShiftAmount <= 0){
-        val solveDecrypt = decrypt(str, -maxShiftAmount) // Pass the absolute value of maxShiftAmount to decrypt
-        println("Caesar " + maxShiftAmount + ": " + solveDecrypt)
-        negativeShiftValueRecursion(maxShiftAmount + 1)
-      }
-    }
-  }
-}
+}//ends CeaserCipher 
